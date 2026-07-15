@@ -1,13 +1,41 @@
 <script setup>
-// TODO:
-// Создать основное состояние приложения для хранения данных по акциям.
-//
-// Структура состояния должна содержать:
-// - список акций;
-// - текущую (актуальную) цену каждой акции;
-// - историю изменения цены для каждой акции.
-//
-// Структуру придумай сам
+import { getActualPrice } from "@/services/price.service";
+import { reactive, onMounted, onUnmounted } from "vue";
+
+const sharesData = reactive([
+  {
+    stockTicker: "AAPL",
+    currentPrice: 300,
+  },
+  {
+    stockTicker: "GOOG",
+    currentPrice: 300,
+  },
+]);
+
+const historyPrice = reactive({
+  AAPL: [],
+  GOOG: [],
+});
+
+let timerId = null;
+
+onMounted(() => {
+  timerId = setInterval(() => {
+    const newPrices = getActualPrice(sharesData);
+
+    sharesData.forEach((item) => {
+      historyPrice[item.stockTicker].push(item.currentPrice);
+
+      item.currentPrice = newPrices[item.stockTicker];
+    });
+  }, 2000);
+});
+
+onUnmounted(() => {
+  clearInterval(timerId);
+});
+
 //
 // TODO:
 // После инициализации приложения запустить механизм "биржевых тиков".
@@ -26,7 +54,9 @@
 </script>
 
 <template>
-  <div></div>
+  <div v-for="item in sharesData">
+    {{ item.stockTicker }}: {{ item.currentPrice.toFixed(2) }}$
+  </div>
 </template>
 
 <style scoped></style>
