@@ -29,7 +29,7 @@ onMounted(() => {
 
       item.currentPrice = newPrices[item.stockTicker];
     });
-  }, 2000);
+  }, 1000);
 });
 
 onUnmounted(() => {
