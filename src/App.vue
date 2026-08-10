@@ -1,6 +1,11 @@
 <script setup>
+
 import { getActualPrice } from "@/services/price.service";
 import { reactive, onMounted, onUnmounted } from "vue";
+import UserDashboard from "@/components/UserDashboard.vue";
+import SharesMarket from "@/components/SharesMarket.vue";
+import SharesChart from "@/components/SharesChart.vue";
+import UserPortfolio from "@/components/UserPortfolio.vue";
 
 const sharesData = reactive([
   {
@@ -11,11 +16,16 @@ const sharesData = reactive([
     stockTicker: "GOOG",
     currentPrice: 300,
   },
+  {
+    stockTicker: "TSLA",
+    currentPrice: 300,
+  },
 ]);
 
 const historyPrice = reactive({
   AAPL: [],
   GOOG: [],
+  TSLA: [],
 });
 
 let timerId = null;
@@ -54,9 +64,33 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-for="item in sharesData">
-    {{ item.stockTicker }}: {{ item.currentPrice.toFixed(2) }}$
+  <UserDashboard/>
+  <div class="shares-container">
+    <SharesMarket :sharesData="sharesData" />
+<SharesChart/>
   </div>
+  <UserPortfolio :sharesData="sharesData" />
+  <!-- <div v-for="item in sharesData">
+    {{ item.stockTicker }}: {{ item.currentPrice.toFixed(2) }}$
+  </div> -->
 </template>
 
-<style scoped></style>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Inter, sans-serif;
+
+}
+
+.shares-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px;
+}
+</style>
