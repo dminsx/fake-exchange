@@ -71,7 +71,12 @@ onUnmounted(() => {
 <template>
   <UserDashboard :userData="userData" />
   <div class="shares-container">
-    <SharesMarket :sharesData="sharesData" :userData="userData" action="Buy" />
+    <SharesMarket
+      :historyPrice="historyPrice"
+      :sharesData="sharesData"
+      :userData="userData"
+      action="Buy"
+    />
     <SharesChart />
   </div>
   <UserPortfolio :sharesData="sharesData" :userData="userData" action="Sell" />

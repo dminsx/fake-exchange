@@ -8,6 +8,12 @@ const props = defineProps({
   },
 });
 
+const getPortfolioByPurchasePrice = computed(() => {
+  return props.userData.shares.reduce((total, share) => {
+    return total + share.purchasePrice * share.quantity;
+  }, 0);
+});
+
 const getPortfolioValue = computed(() => {
   return props.userData.shares.reduce((total, share) => {
     return total + share.currentPrice * share.quantity;
@@ -15,13 +21,9 @@ const getPortfolioValue = computed(() => {
 });
 
 const getTotalPnL = computed(() => {
-  return props.userData.shares.reduce((total, share) => {
-    return (
-      total +
-      (share.purchasePrice * share.quantity -
-        share.currentPrice * share.quantity)
-    );
-  }, 0);
+  return (getPortfolioValue.value - getPortfolioByPurchasePrice.value).toFixed(
+    2,
+  );
 });
 </script>
 
@@ -43,7 +45,7 @@ const getTotalPnL = computed(() => {
     </div>
     <div class="capital-card">
       <p class="card-title">Profit/Loss</p>
-      <p class="card-value">${{ getTotalPnL?.toFixed(2) }}</p>
+      <p class="card-value">${{ getTotalPnL }}</p>
     </div>
   </div>
 </template>

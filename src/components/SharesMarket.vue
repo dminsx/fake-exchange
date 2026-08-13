@@ -1,7 +1,8 @@
 <script setup>
 import SharesTemplate from "@/components/SharesTemplate.vue";
+import { computed } from "vue";
 
-defineProps({
+const props = defineProps({
   sharesData: {
     type: Array,
     required: true,
@@ -14,6 +15,11 @@ defineProps({
     type: String,
     required: true,
   },
+
+  historyPrice: {
+    type: Object,
+    required: true,
+  },
 });
 </script>
 
@@ -24,8 +30,16 @@ defineProps({
       <template #headers>
         <th>Change</th>
       </template>
-      <template #columns>
-        <td>+1%</td>
+      <template #columns="{ share }">
+        <td>
+          {{
+            (
+              (share.currentPrice / props.historyPrice[share.stockTicker][0] -
+                1) *
+              100
+            ).toFixed(1)
+          }}%
+        </td>
       </template>
     </SharesTemplate>
   </div>
@@ -47,6 +61,12 @@ defineProps({
   font-size: 1.2rem;
   border-radius: 10px;
   margin-bottom: 10px;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0 3px;
+  table-layout: fixed;
 }
 
 th {
