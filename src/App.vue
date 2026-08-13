@@ -1,5 +1,4 @@
 <script setup>
-
 import { getActualPrice } from "@/services/price.service";
 import { reactive, onMounted, onUnmounted } from "vue";
 import UserDashboard from "@/components/UserDashboard.vue";
@@ -28,16 +27,38 @@ const historyPrice = reactive({
   TSLA: [],
 });
 
+const userData = reactive({
+  balance: 75000.0,
+  shares: [
+    {
+      stockTicker: "AAPL",
+      currentPrice: 300,
+      purchasePrice: 250,
+      quantity: 10,
+    },
+    {
+      stockTicker: "GOOG",
+      currentPrice: 300,
+      purchasePrice: 250,
+      quantity: 10,
+    },
+  ],
+});
+
 let timerId = null;
 
 onMounted(() => {
   timerId = setInterval(() => {
     const newPrices = getActualPrice(sharesData);
 
-    sharesData.forEach((item) => {
-      historyPrice[item.stockTicker].push(item.currentPrice);
+    sharesData.forEach((share) => {
+      historyPrice[share.stockTicker].push(share.currentPrice);
 
-      item.currentPrice = newPrices[item.stockTicker];
+      share.currentPrice = newPrices[share.stockTicker];
+    });
+
+    userData.shares.forEach((share) => {
+      share.currentPrice = newPrices[share.stockTicker];
     });
   }, 1000);
 });
@@ -45,34 +66,15 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(timerId);
 });
-
-//
-// TODO:
-// После инициализации приложения запустить механизм "биржевых тиков".
-// Через фиксированный интервал (например, раз в 1-2 секунды)
-// вызывать getActualPrice() из price.service.js.
-//
-// TODO:
-// После получения новых цен:
-// - обновить текущую цену каждой акции;
-// - добавить новую запись в историю;
-// - ограничить размер истории (например, хранить только последние 100 изменений).
-//
-// TODO:
-// При размонтировании компонента остановить механизм тиков
-// (очистить setInterval).
 </script>
 
 <template>
-  <UserDashboard/>
+  <UserDashboard :userData="userData" />
   <div class="shares-container">
-    <SharesMarket :sharesData="sharesData" />
-<SharesChart/>
+    <SharesMarket :sharesData="sharesData" :userData="userData" action="Buy" />
+    <SharesChart />
   </div>
-  <UserPortfolio :sharesData="sharesData" />
-  <!-- <div v-for="item in sharesData">
-    {{ item.stockTicker }}: {{ item.currentPrice.toFixed(2) }}$
-  </div> -->
+  <UserPortfolio :sharesData="sharesData" :userData="userData" action="Sell" />
 </template>
 
 <style>
@@ -84,7 +86,6 @@ onUnmounted(() => {
 
 body {
   font-family: Inter, sans-serif;
-
 }
 
 .shares-container {
