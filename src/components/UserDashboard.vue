@@ -8,22 +8,20 @@ const props = defineProps({
   },
 });
 
-const getPortfolioByPurchasePrice = computed(() => {
+const portfolioByPurchasePrice = computed(() => {
   return props.userData.shares.reduce((total, share) => {
     return total + share.purchasePrice * share.quantity;
   }, 0);
 });
 
-const getPortfolioValue = computed(() => {
+const portfolioValue = computed(() => {
   return props.userData.shares.reduce((total, share) => {
     return total + share.currentPrice * share.quantity;
   }, 0);
 });
 
-const getTotalPnL = computed(() => {
-  return (getPortfolioValue.value - getPortfolioByPurchasePrice.value).toFixed(
-    2,
-  );
+const totalPnL = computed(() => {
+  return (portfolioValue.value - portfolioByPurchasePrice.value).toFixed(2);
 });
 </script>
 
@@ -35,17 +33,17 @@ const getTotalPnL = computed(() => {
     </div>
     <div class="capital-card">
       <p class="card-title">Portfolio Value</p>
-      <p class="card-value">${{ getPortfolioValue?.toFixed(2) }}</p>
+      <p class="card-value">${{ portfolioValue?.toFixed(2) }}</p>
     </div>
     <div class="capital-card">
       <p class="card-title">Total Capital</p>
       <p class="card-value">
-        ${{ (props.userData.balance + getPortfolioValue).toFixed(2) }}
+        ${{ (props.userData.balance + portfolioValue).toFixed(2) }}
       </p>
     </div>
     <div class="capital-card">
       <p class="card-title">Profit/Loss</p>
-      <p class="card-value">${{ getTotalPnL }}</p>
+      <p class="card-value">${{ totalPnL }}</p>
     </div>
   </div>
 </template>
