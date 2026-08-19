@@ -1,6 +1,5 @@
 <script setup>
 import SharesTemplate from "@/components/SharesTemplate.vue";
-import { computed } from "vue";
 
 const props = defineProps({
   sharesData: {
@@ -21,12 +20,23 @@ const props = defineProps({
     required: true,
   },
 });
+
+const emit = defineEmits(["buyShare"]);
+
+function buyShare(amount, purchasedShareData) {
+  emit("buyShare", amount, purchasedShareData);
+}
 </script>
 
 <template>
   <div class="shares-market">
     <p class="market-title">Market</p>
-    <SharesTemplate :sharesData="sharesData" :userData="userData" action="Buy">
+    <SharesTemplate
+      @buyShare="buyShare"
+      :sharesData="sharesData"
+      :userData="userData"
+      action="Buy"
+    >
       <template #headers>
         <th>Change</th>
       </template>

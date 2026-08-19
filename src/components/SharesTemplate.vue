@@ -1,4 +1,7 @@
 <script setup>
+import { ref, computed, reactive } from "vue";
+import PurchaseDialogBox from "@/components/PurchaseDialogBox.vue";
+
 const props = defineProps({
   sharesData: {
     type: Array,
@@ -13,6 +16,54 @@ const props = defineProps({
     required: true,
   },
 });
+
+const purchasedShare = ref("");
+
+const quantityPurchasedShare = ref(0);
+
+const getPricePurchasedShare = (purchasedShare) => {
+  const foundShare = props.sharesData.find((shareData) => {
+    return shareData.stockTicker === purchasedShare;
+  });
+  return foundShare ? foundShare.currentPrice : 0;
+};
+
+const purchaseAmount = computed(() => {
+  const price = getPricePurchasedShare(purchasedShare.value);
+  return price * quantityPurchasedShare.value;
+});
+
+function getPurchasedShare(stockTicker) {
+  purchasedShare.value = stockTicker;
+}
+
+function cancelPurchasedShare() {
+  purchasedShare.value = "";
+}
+
+const userPurchasedShare = ref({});
+
+const emit = defineEmits(["buyShare"]);
+
+function buyShare() {
+  if (props.userData.balance < purchaseAmount.value) {
+    return alert("Недостаточно средств!");
+  }
+
+  userPurchasedShare.value = {
+    stockTicker: purchasedShare.value,
+    currentPrice: getPricePurchasedShare(purchasedShare.value),
+    purchasePrice: purchaseAmount.value / quantityPurchasedShare.value,
+    quantity: quantityPurchasedShare.value,
+    amountShares: purchaseAmount.value,
+  };
+
+  emit("buyShare", purchaseAmount.value, userPurchasedShare.value);
+
+  purchasedShare.value = "";
+  quantityPurchasedShare.value = 0;
+  userPurchasedShare.value = {};
+}
 </script>
 
 <template>
@@ -31,7 +82,9 @@ const props = defineProps({
         v-if="props.action === 'Buy'"
         v-for="share in props.sharesData"
         :key="share.stockTicker"
-        class="share-card"
+        :class="
+          purchasedShare === share.stockTicker ? 'active-share' : 'share-card'
+        "
       >
         <td>{{ share.stockTicker }}</td>
         <td>{{ share.currentPrice.toFixed(2) }}$</td>
@@ -40,8 +93,9 @@ const props = defineProps({
         <td>
           <button
             :class="props.action === 'Buy' ? 'buy-button' : 'sell-button'"
+            @click="getPurchasedShare(share.stockTicker)"
           >
-            {{ action }}
+            {{ props.action }}
           </button>
         </td>
       </tr>
@@ -57,6 +111,7 @@ const props = defineProps({
 
         <td>
           <button
+            @click=""
             :class="props.action === 'Buy' ? 'buy-button' : 'sell-button'"
           >
             {{ action }}
@@ -65,6 +120,17 @@ const props = defineProps({
       </tr>
     </tbody>
   </table>
+  <PurchaseDialogBox
+    :getPricePurchasedShare="getPricePurchasedShare"
+    :purchaseAmount="purchaseAmount"
+    :quantityPurchasedShare="quantityPurchasedShare"
+    :sharesData="sharesData"
+    :purchasedShare="purchasedShare"
+    @cancel="cancelPurchasedShare"
+    @buyShare="buyShare"
+    v-model.number="quantityPurchasedShare"
+    class="dialog-box"
+  />
 </template>
 
 <style scoped>
@@ -89,6 +155,10 @@ td {
   border-top: 1px solid black;
 }
 
+.active-share {
+  background-color: #8a8a8a;
+}
+
 .buy-button {
   background-color: #0a0eec;
   color: white;
@@ -98,7 +168,6 @@ td {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-
   cursor: pointer;
   border-radius: 5px;
 }
@@ -123,5 +192,19 @@ button:active {
 
   cursor: pointer;
   border-radius: 5px;
+}
+
+.dialog-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #8a8a8a;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 </style>

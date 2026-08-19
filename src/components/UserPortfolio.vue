@@ -30,7 +30,7 @@ const props = defineProps({
         <th>Current Profit/Loss</th>
       </template>
       <template #columns="{ share }">
-        <td>{{ share.purchasePrice }}</td>
+        <td>{{ (share.amountShares / share.quantity).toFixed(2) }}</td>
         <td>{{ share.quantity }} shares</td>
         <td>${{ (share.currentPrice * share.quantity).toFixed(2) }}</td>
         <td>
@@ -65,7 +65,7 @@ const props = defineProps({
   margin-bottom: 10px;
 }
 
-table {
+:deep(table) {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 3px;
