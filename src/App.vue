@@ -29,20 +29,7 @@ const historyPrice = reactive({
 
 const userData = reactive({
   balance: 75000.0,
-  shares: [
-    {
-      stockTicker: "AAPL",
-      currentPrice: 300,
-      purchasePrice: 250,
-      quantity: 10,
-    },
-    {
-      stockTicker: "GOOG",
-      currentPrice: 300,
-      purchasePrice: 250,
-      quantity: 10,
-    },
-  ],
+  shares: [],
 });
 
 let timerId = null;
@@ -66,16 +53,33 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(timerId);
 });
+
+function buyShare(amount, purchasedShareData) {
+  const existingShare = userData.shares.find((share) => {
+    return share.stockTicker === purchasedShareData.stockTicker;
+  });
+
+  if (existingShare) {
+    existingShare.quantity += purchasedShareData.quantity;
+    existingShare.amountShares += purchasedShareData.amountShares;
+  } else {
+    userData.shares.push(purchasedShareData);
+  }
+
+  userData.balance -= amount;
+}
 </script>
 
 <template>
   <UserDashboard :userData="userData" />
   <div class="shares-container">
     <SharesMarket
+      @buyShare="buyShare"
       :historyPrice="historyPrice"
       :sharesData="sharesData"
       :userData="userData"
       action="Buy"
+      class="shares-market"
     />
     <SharesChart />
   </div>
@@ -94,6 +98,7 @@ body {
 }
 
 .shares-container {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   gap: 15px;
