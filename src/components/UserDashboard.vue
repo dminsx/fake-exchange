@@ -10,7 +10,7 @@ const props = defineProps({
 
 const portfolioByPurchasePrice = computed(() => {
   return props.userData.shares.reduce((total, share) => {
-    return total + share.purchasePrice * share.quantity;
+    return total + share.amountShares;
   }, 0);
 });
 
