@@ -68,6 +68,28 @@ function buyShare(amount, purchasedShareData) {
 
   userData.balance -= amount;
 }
+
+function sellShare(soldShare, quantity) {
+  const shareIndex = userData.shares.findIndex((share) => {
+    return share.stockTicker === soldShare;
+  });
+
+  const existingShare = userData.shares[shareIndex];
+
+  if (existingShare.quantity < quantity) {
+    return alert("Ты столько не купил еще!");
+  } else if (quantity === 0) {
+    return alert("Введи количество акций для продажи");
+  } else {
+    userData.balance += quantity * existingShare.currentPrice;
+    existingShare.amountShares -= quantity * existingShare.purchasePrice;
+    existingShare.quantity -= quantity;
+  }
+
+  if (existingShare.quantity === 0) {
+    userData.shares.splice(shareIndex, 1);
+  }
+}
 </script>
 
 <template>
@@ -83,7 +105,12 @@ function buyShare(amount, purchasedShareData) {
     />
     <SharesChart />
   </div>
-  <UserPortfolio :sharesData="sharesData" :userData="userData" action="Sell" />
+  <UserPortfolio
+    @sellShare="sellShare"
+    :sharesData="sharesData"
+    :userData="userData"
+    action="Sell"
+  />
 </template>
 
 <style>

@@ -10,19 +10,29 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-
   action: {
     type: String,
     required: true,
   },
 });
+
+const emit = defineEmits(["sellShare"]);
+
+function sellShare(soldShare, quantity) {
+  emit("sellShare", soldShare, quantity);
+}
 </script>
 
 <template>
   <div class="portfolio-container">
     <p class="portfolio-title">Your Portfolio</p>
 
-    <SharesTemplate :sharesData="sharesData" :userData="userData" action="Sell">
+    <SharesTemplate
+      @sellShare="sellShare"
+      :sharesData="sharesData"
+      :userData="userData"
+      action="Sell"
+    >
       <template #headers>
         <th>Purchase Price</th>
         <th>Quantity</th>
@@ -37,7 +47,7 @@ const props = defineProps({
           ${{
             (
               share.currentPrice * share.quantity -
-              share.purchasePrice * share.quantity
+              (share.amountShares / share.quantity) * share.quantity
             ).toFixed(2)
           }}
         </td>
@@ -69,7 +79,6 @@ const props = defineProps({
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 3px;
-  table-layout: fixed;
 }
 
 th {

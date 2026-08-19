@@ -39,15 +39,20 @@ function getPurchasedShare(stockTicker) {
 
 function cancelPurchasedShare() {
   purchasedShare.value = "";
+  quantityPurchasedShare.value = 0;
 }
 
 const userPurchasedShare = ref({});
 
-const emit = defineEmits(["buyShare"]);
+const emit = defineEmits(["buyShare", "sellShare"]);
 
 function buyShare() {
   if (props.userData.balance < purchaseAmount.value) {
     return alert("Недостаточно средств!");
+  }
+
+  if (quantityPurchasedShare.value === 0) {
+    return alert("Введите количество акций для покупки");
   }
 
   userPurchasedShare.value = {
@@ -63,6 +68,25 @@ function buyShare() {
   purchasedShare.value = "";
   quantityPurchasedShare.value = 0;
   userPurchasedShare.value = {};
+}
+
+const soldShare = ref("");
+
+const quantitySoldShare = ref(0);
+
+function getSoldShare(stockTicker) {
+  soldShare.value = stockTicker;
+}
+
+function sellShare() {
+  emit("sellShare", soldShare.value, quantitySoldShare.value);
+  soldShare.value = "";
+  quantitySoldShare.value = 0;
+}
+
+function cancelSoldShare() {
+  soldShare.value = "";
+  quantitySoldShare.value = 0;
 }
 </script>
 
@@ -110,12 +134,29 @@ function buyShare() {
         <slot name="columns" :share="share" />
 
         <td>
-          <button
-            :class="props.action === 'Buy' ? 'buy-button' : 'sell-button'"
-          >
-            {{ action }}
-          </button>
+          <div class="sell-container">
+            <button
+              :disabled="soldShare !== ''"
+              @click="getSoldShare(share.stockTicker)"
+              :class="props.action === 'Buy' ? 'buy-button' : 'sell-button'"
+            >
+              {{ action }}
+            </button>
+
+            <div v-if="soldShare === share.stockTicker" class="sell-interface">
+              <input
+                v-model.number="quantitySoldShare"
+                class="input-quantity"
+                type="number"
+                min="0"
+                placeholder="Кол-во"
+              />
+              <button @click="sellShare">V</button>
+              <button @click="cancelSoldShare">X</button>
+            </div>
+          </div>
         </td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -154,8 +195,28 @@ td {
   border-top: 1px solid black;
 }
 
+.sell-container {
+  display: flex;
+  gap: 10px;
+}
+
+.sell-interface {
+  display: flex;
+  gap: 5px;
+}
+
+.input-quantity {
+  width: 60px;
+  height: 38px;
+}
+
 .active-share {
   background-color: #8a8a8a;
+}
+
+button {
+  padding: 8px 16px;
+  cursor: pointer;
 }
 
 .buy-button {
@@ -171,11 +232,16 @@ td {
   border-radius: 5px;
 }
 
-button:hover {
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+button:not(:disabled):hover {
   opacity: 0.8;
 }
 
-button:active {
+button:not(:disabled):active {
   transform: translate(1px, 1px);
 }
 
@@ -188,7 +254,6 @@ button:active {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-
   cursor: pointer;
   border-radius: 5px;
 }
