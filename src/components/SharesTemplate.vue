@@ -111,7 +111,6 @@ function buyShare() {
 
         <td>
           <button
-            @click=""
             :class="props.action === 'Buy' ? 'buy-button' : 'sell-button'"
           >
             {{ action }}
