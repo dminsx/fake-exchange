@@ -50,26 +50,66 @@ const totalPnL = computed(() => {
 
 <style scoped>
 .capital-data {
-  display: flex;
-  justify-content: space-around;
-  font-family: Inter, sans-serif;
-  padding: 15px;
-  gap: 15px;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 16px;
+  padding: 24px;
 }
 
 .capital-card {
-  flex: 0.75;
-  border: 1px solid black;
-  border-radius: 10px;
-  padding: 15px;
+  min-height: 120px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 20px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .card-title {
-  color: #888;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .card-value {
-  font-size: 1.5rem;
-  font-weight: bold;
+  margin-top: 18px;
+
+  color: var(--text);
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 900px) {
+  .capital-data {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .capital-data {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .capital-card {
+    min-height: 100px;
+  }
 }
 </style>

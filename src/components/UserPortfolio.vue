@@ -58,40 +58,88 @@ function sellShare(soldShare, quantity) {
 
 <style scoped>
 .portfolio-container {
+  width: calc(100% - 48px);
+  max-width: 1452px;
+
+  margin: 0 auto 24px;
+  padding: 20px;
+
   font-family: Inter, sans-serif;
-  font-weight: normal;
-  font-size: 1.2rem;
-  border: 1px solid black;
-  border-radius: 10px;
-  margin: 15px;
-  padding: 10px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .portfolio-title {
-  font-family: Inter, sans-serif;
-  font-weight: bold;
-  font-size: 1.2rem;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 18px;
+
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
 }
 
 :deep(table) {
   width: 100%;
+
   border-collapse: separate;
-  border-spacing: 0 3px;
+  border-spacing: 0 6px;
 }
 
 th {
+  padding: 4px 10px 8px;
+
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
   text-align: left;
-  font-weight: normal;
-  font-size: 0.9rem;
-  color: #888;
-  line-height: 0.5;
-  padding: 5px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 :deep(td) {
-  border-top: 1px solid black;
-  padding: 10px;
+  padding: 13px 10px;
+
+  background: #151820;
+
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+
+  color: var(--text);
+
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+:deep(tbody tr:hover td) {
+  background: var(--surface-hover);
+  border-top-color: var(--border);
+  border-bottom-color: var(--border);
+}
+
+:deep(td:first-child) {
+  border-left: 1px solid transparent;
+  border-radius: 8px 0 0 8px;
+
+  font-weight: 600;
+}
+
+:deep(td:last-child) {
+  border-right: 1px solid transparent;
+  border-radius: 0 8px 8px 0;
+}
+
+@media (max-width: 700px) {
+  .portfolio-container {
+    width: calc(100% - 24px);
+    margin-bottom: 12px;
+    padding: 14px;
+
+    overflow-x: auto;
+  }
+
+  :deep(table) {
+    min-width: 700px;
+  }
 }
 </style>

@@ -1,0 +1,81 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  font-family: "Inter", sans-serif;
+
+  color: #e7eaf0;
+  background: #0b0d12;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --bg: #0b0d12;
+  --surface: #11141b;
+  --surface-hover: #171b24;
+  --border: #242934;
+  --border-light: #303642;
+
+  --text: #e7eaf0;
+  --text-secondary: #8d95a5;
+  --text-muted: #646c7b;
+
+  --blue: #5b7cff;
+  --blue-hover: #6b89ff;
+
+  --green: #32d583;
+  --green-bg: rgba(50, 213, 131, 0.1);
+
+  --red: #ff5c6c;
+  --red-bg: rgba(255, 92, 108, 0.1);
+
+  --radius: 14px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--bg);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+
+  color: var(--text);
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      rgba(91, 124, 255, 0.08),
+      transparent 35%
+    ),
+    var(--bg);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+}

@@ -77,9 +77,11 @@ function sellShare(soldShare, quantity) {
   const existingShare = userData.shares[shareIndex];
 
   if (existingShare.quantity < quantity) {
-    return alert("Ты столько не купил еще!");
+    alert("Ты столько не купил еще!");
+    return;
   } else if (quantity === 0) {
-    return alert("Введи количество акций для продажи");
+    alert("Введи количество акций для продажи");
+    return;
   } else {
     userData.balance += quantity * existingShare.currentPrice;
     existingShare.amountShares -= quantity * existingShare.purchasePrice;
@@ -126,9 +128,34 @@ body {
 
 .shares-container {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  padding: 15px;
+  max-width: 1500px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: minmax(380px, 0.9fr) minmax(500px, 1.6fr);
+
+  gap: 16px;
+  padding: 0 24px 16px;
+}
+
+.shares-market,
+.shares-chart,
+.portfolio-container,
+.capital-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+@media (max-width: 1000px) {
+  .shares-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .shares-container {
+    padding: 0 12px 12px;
+  }
 }
 </style>

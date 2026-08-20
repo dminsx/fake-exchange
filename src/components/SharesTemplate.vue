@@ -151,8 +151,8 @@ function cancelSoldShare() {
                 min="0"
                 placeholder="Кол-во"
               />
-              <button @click="sellShare">V</button>
-              <button @click="cancelSoldShare">X</button>
+              <button @click="sellShare">v</button>
+              <button @click="cancelSoldShare">x</button>
             </div>
           </div>
         </td>
@@ -175,100 +175,219 @@ function cancelSoldShare() {
 
 <style scoped>
 table {
+  width: 100%;
+
   border-collapse: separate;
-  border-spacing: 0 3px;
+  border-spacing: 0 6px;
+
   table-layout: fixed;
 }
 
 th {
+  padding: 4px 10px 8px;
+
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
   text-align: left;
-  font-weight: normal;
-  font-size: 0.9rem;
-  color: #888;
-  line-height: 0.5;
-  padding: 5px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 td {
+  padding: 12px 10px;
+
+  color: var(--text);
+  font-size: 13px;
+
+  background: #151820;
+
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+
   font-variant-numeric: tabular-nums;
-  padding: 5px 10px;
-  border-top: 1px solid black;
 }
 
-.sell-container {
-  display: flex;
-  gap: 10px;
+tbody tr {
+  transition: transform 0.15s ease;
 }
 
-.sell-interface {
-  display: flex;
-  gap: 5px;
+tbody tr:hover td {
+  background: var(--surface-hover);
+  border-top-color: var(--border);
+  border-bottom-color: var(--border);
 }
 
-.input-quantity {
-  width: 60px;
-  height: 38px;
+td:first-child {
+  border-left: 1px solid transparent;
+  border-radius: 8px 0 0 8px;
+
+  font-weight: 600;
 }
 
-.active-share {
-  background-color: #8a8a8a;
+td:last-child {
+  border-right: 1px solid transparent;
+  border-radius: 0 8px 8px 0;
+}
+
+.active-share td {
+  background: rgba(91, 124, 255, 0.12);
+  border-top-color: rgba(91, 124, 255, 0.35);
+  border-bottom-color: rgba(91, 124, 255, 0.35);
 }
 
 button {
-  padding: 8px 16px;
+  border: none;
   cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease,
+    opacity 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.buy-button,
+.sell-button {
+  min-width: 72px;
+  padding: 8px 14px;
+
+  border-radius: 7px;
+
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .buy-button {
-  background-color: #0a0eec;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
+  background: var(--blue);
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-button:not(:disabled):hover {
-  opacity: 0.8;
-}
-
-button:not(:disabled):active {
-  transform: translate(1px, 1px);
+.buy-button:hover {
+  background: var(--blue-hover);
 }
 
 .sell-button {
-  background-color: #ec0a0a;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
+  background: var(--red);
+}
+
+.sell-button:hover {
+  background: #ff6d7b;
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.sell-container {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  width: 170px;
+  height: 38px;
+}
+
+.sell-container > .sell-button {
+  position: absolute;
+  right: 0;
+
+  width: 72px;
+}
+
+.sell-interface {
+  position: absolute;
+  right: 80px;
+
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  animation: slideIn 0.15s ease;
+}
+
+.input-quantity {
+  width: 65px;
+  height: 34px;
+
+  padding: 0 8px;
+
+  color: var(--text);
+  background: #0c0f15;
+
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+
+  outline: none;
+}
+
+.input-quantity:focus {
+  border-color: var(--blue);
+}
+
+.sell-interface button {
+  width: 32px;
+  height: 34px;
+
+  padding: 0;
+
+  border-radius: 6px;
+
+  color: var(--text);
+  background: #20242d;
+}
+
+.sell-interface button:hover {
+  background: #2a303b;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .dialog-box {
   position: fixed;
+
   top: 50%;
   left: 50%;
+
   transform: translate(-50%, -50%);
-  background: #8a8a8a;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 500px;
-  width: 100%;
+
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  width: min(420px, calc(100vw - 32px));
+
+  padding: 24px;
+
+  color: var(--text);
+
+  background: #151820;
+
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 100vmax rgba(0, 0, 0, 0.55);
+}
+
+@media (max-width: 600px) {
+  table {
+    min-width: 560px;
+  }
 }
 </style>
