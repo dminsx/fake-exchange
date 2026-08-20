@@ -1,161 +1,94 @@
-<script setup>
-import { getActualPrice } from "@/services/price.service";
-import { reactive, onMounted, onUnmounted } from "vue";
-import UserDashboard from "@/components/UserDashboard.vue";
-import SharesMarket from "@/components/SharesMarket.vue";
-import SharesChart from "@/components/SharesChart.vue";
-import UserPortfolio from "@/components/UserPortfolio.vue";
-
-const sharesData = reactive([
-  {
-    stockTicker: "AAPL",
-    currentPrice: 300,
-  },
-  {
-    stockTicker: "GOOG",
-    currentPrice: 300,
-  },
-  {
-    stockTicker: "TSLA",
-    currentPrice: 300,
-  },
-]);
-
-const historyPrice = reactive({
-  AAPL: [],
-  GOOG: [],
-  TSLA: [],
-});
-
-const userData = reactive({
-  balance: 75000.0,
-  shares: [],
-});
-
-let timerId = null;
-
-onMounted(() => {
-  timerId = setInterval(() => {
-    const newPrices = getActualPrice(sharesData);
-
-    sharesData.forEach((share) => {
-      historyPrice[share.stockTicker].push(share.currentPrice);
-
-      share.currentPrice = newPrices[share.stockTicker];
-    });
-
-    userData.shares.forEach((share) => {
-      share.currentPrice = newPrices[share.stockTicker];
-    });
-  }, 1000);
-});
-
-onUnmounted(() => {
-  clearInterval(timerId);
-});
-
-function buyShare(amount, purchasedShareData) {
-  const existingShare = userData.shares.find((share) => {
-    return share.stockTicker === purchasedShareData.stockTicker;
-  });
-
-  if (existingShare) {
-    existingShare.quantity += purchasedShareData.quantity;
-    existingShare.amountShares += purchasedShareData.amountShares;
-  } else {
-    userData.shares.push(purchasedShareData);
-  }
-
-  userData.balance -= amount;
-}
-
-function sellShare(soldShare, quantity) {
-  const shareIndex = userData.shares.findIndex((share) => {
-    return share.stockTicker === soldShare;
-  });
-
-  const existingShare = userData.shares[shareIndex];
-
-  if (existingShare.quantity < quantity) {
-    alert("Ты столько не купил еще!");
-    return;
-  } else if (quantity === 0) {
-    alert("Введи количество акций для продажи");
-    return;
-  } else {
-    userData.balance += quantity * existingShare.currentPrice;
-    existingShare.amountShares -= quantity * existingShare.purchasePrice;
-    existingShare.quantity -= quantity;
-  }
-
-  if (existingShare.quantity === 0) {
-    userData.shares.splice(shareIndex, 1);
-  }
-}
-</script>
+<script setup></script>
 
 <template>
-  <UserDashboard :userData="userData" />
-  <div class="shares-container">
-    <SharesMarket
-      @buyShare="buyShare"
-      :historyPrice="historyPrice"
-      :sharesData="sharesData"
-      :userData="userData"
-      action="Buy"
-      class="shares-market"
-    />
-    <SharesChart />
-  </div>
-  <UserPortfolio
-    @sellShare="sellShare"
-    :sharesData="sharesData"
-    :userData="userData"
-    action="Sell"
-  />
+  <nav class="main-nav">
+    <div class="nav-brand">ShirtOFF Exchange</div>
+    <div class="nav-links">
+      <RouterLink to="/">Главная</RouterLink>
+      <RouterLink to="/about">Информация</RouterLink>
+    </div>
+  </nav>
+
+  <RouterView />
 </template>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Inter, sans-serif;
-}
-
-.shares-container {
-  width: 100%;
-  max-width: 1500px;
-  margin: 0 auto;
-
-  display: grid;
-  grid-template-columns: minmax(380px, 0.9fr) minmax(500px, 1.6fr);
-
-  gap: 16px;
-  padding: 0 24px 16px;
-}
-
-.shares-market,
-.shares-chart,
-.portfolio-container,
-.capital-card {
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px;
+  height: 64px;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-bottom: 1px solid var(--border);
+  font-family: "Inter", sans-serif;
 }
 
-@media (max-width: 1000px) {
-  .shares-container {
-    grid-template-columns: 1fr;
+.nav-brand {
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+.nav-brand span {
+  color: var(--blue);
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-links a {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.nav-links a:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.nav-links a.router-link-active {
+  color: var(--text);
+  background: rgba(91, 124, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(91, 124, 255, 0.25);
+}
+
+@media (max-width: 700px) {
+  .main-nav {
+    padding: 0 16px;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 56px;
+    gap: 6px;
+  }
+
+  .nav-brand {
+    font-size: 17px;
+  }
+
+  .nav-links {
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .nav-links a {
+    padding: 6px 12px;
+    font-size: 13px;
   }
 }
 
-@media (max-width: 600px) {
-  .shares-container {
-    padding: 0 12px 12px;
+@media (max-width: 400px) {
+  .nav-links a {
+    font-size: 12px;
+    padding: 4px 10px;
   }
 }
 </style>
